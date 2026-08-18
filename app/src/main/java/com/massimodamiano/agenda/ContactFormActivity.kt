@@ -19,6 +19,11 @@ class ContactFormActivity : AppCompatActivity() {
         val address = findViewById<TextInputEditText>(R.id.etAddress)
         current?.let { first.setText(it.firstName); last.setText(it.lastName); phone.setText(it.phone); address.setText(it.address) }
 
+        findViewById<MaterialButton>(R.id.btnCancel).setOnClickListener {
+            setResult(RESULT_CANCELED)
+            finish()
+        }
+
         findViewById<MaterialButton>(R.id.btnSave).setOnClickListener {
             val values = listOf(first, last, phone)
             if (values.any { it.text.isNullOrBlank() }) {
