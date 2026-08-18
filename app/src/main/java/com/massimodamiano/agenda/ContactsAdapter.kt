@@ -7,9 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.massimodamiano.agenda.domain.Contact
 
 class ContactsAdapter(
-    private var contacts: List<Contact>,
+    contacts: List<Contact>,
     private val onClick: (Contact) -> Unit
 ) : RecyclerView.Adapter<ContactsAdapter.Holder>() {
+    private var allContacts = contacts
+    private var contacts = contacts
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = Holder(
         LayoutInflater.from(parent.context).inflate(R.layout.item_contact, parent, false)
     )
@@ -27,7 +29,16 @@ class ContactsAdapter(
     }
 
     fun submitList(newContacts: List<Contact>) {
+        allContacts = newContacts
         contacts = newContacts
+        notifyDataSetChanged()
+    }
+
+    fun filter(query: String) {
+        val value = query.trim().lowercase()
+        contacts = if (value.isEmpty()) allContacts else allContacts.filter {
+            "${it.firstName} ${it.lastName}".lowercase().contains(value) || it.phone.contains(value)
+        }
         notifyDataSetChanged()
     }
 }
