@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Agenda Android</string>
+    <string name="welcome_message">Proyecto base con Views/XML</string>
+</resources>
