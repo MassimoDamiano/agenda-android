@@ -2,18 +2,24 @@ package com.massimodamiano.agenda
 
 import android.os.Bundle
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.massimodamiano.agenda.domain.Contact
 import com.massimodamiano.agenda.data.ContactRepository
+import com.massimodamiano.agenda.data.remote.RemoteContactsRepository
+import com.massimodamiano.agenda.data.remote.SyncState
+import kotlinx.coroutines.launch
 
 class ContactsActivity : AppCompatActivity() {
     private lateinit var repository: ContactRepository
     private lateinit var adapter: ContactsAdapter
+    private val remoteRepository = RemoteContactsRepository()
     private val formLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) refreshContacts()
     }
@@ -43,7 +49,19 @@ class ContactsActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean { adapter.filter(newText.orEmpty()); return true }
         })
         toolbar.setOnMenuItemClickListener {
-            if (it.itemId == R.id.action_logout) { logout(); true } else false
+            when (it.itemId) {
+                R.id.action_logout -> { logout(); true }
+                R.id.action_sync -> { syncContacts(); true }
+                else -> false
+            }
+        }
+        lifecycleScope.launch {
+            remoteRepository.state.collect { state -> when (state) {
+                SyncState.Loading -> Toast.makeText(this@ContactsActivity, R.string.syncing, Toast.LENGTH_SHORT).show()
+                is SyncState.Success -> Toast.makeText(this@ContactsActivity, getString(R.string.sync_success, state.count), Toast.LENGTH_SHORT).show()
+                is SyncState.Error -> Toast.makeText(this@ContactsActivity, state.message, Toast.LENGTH_LONG).show()
+                SyncState.Idle -> Unit
+            }}
         }
     }
 
@@ -55,5 +73,12 @@ class ContactsActivity : AppCompatActivity() {
         startActivity(Intent(this, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
+    }
+
+    private fun syncContacts() = lifecycleScope.launch {
+        remoteRepository.fetch().onSuccess { contacts ->
+            contacts.forEach(repository::insert)
+            refreshContacts()
+        }
     }
 }
