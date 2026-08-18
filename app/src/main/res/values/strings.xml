@@ -5,4 +5,9 @@
     <string name="login">Iniciar sesión</string>
     <string name="invalid_credentials">Usuario o contraseña incorrectos</string>
     <string name="full_name">%1$s %2$s</string>
+    <string name="add_contact">Agregar contacto</string>
+    <string name="first_name">Nombre</string><string name="last_name">Apellido</string>
+    <string name="phone">Teléfono</string><string name="address">Dirección</string>
+    <string name="save">Guardar</string><string name="edit">Editar</string><string name="delete">Eliminar</string>
+    <string name="required">Campo requerido</string>
 </resources>

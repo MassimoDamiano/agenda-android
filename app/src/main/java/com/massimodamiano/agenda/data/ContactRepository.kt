@@ -28,4 +28,17 @@ class ContactRepository(context: Context) {
             }
         }
     }
+
+    fun getById(id: Long): Contact? = getAll().firstOrNull { it.id == id }
+
+    fun update(contact: Contact): Int = helper.writableDatabase.use { db ->
+        db.update("contacts", ContentValues().apply {
+            put("first_name", contact.firstName); put("last_name", contact.lastName)
+            put("phone", contact.phone); put("address", contact.address); put("gender", contact.gender)
+        }, "_id = ?", arrayOf(contact.id.toString()))
+    }
+
+    fun delete(id: Long): Int = helper.writableDatabase.use { db ->
+        db.delete("contacts", "_id = ?", arrayOf(id.toString()))
+    }
 }

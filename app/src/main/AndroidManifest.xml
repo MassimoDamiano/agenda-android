@@ -12,6 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Agendaandroid"
         tools:targetApi="31">
+        <activity android:name=".ContactFormActivity" android:exported="false" />
+        <activity android:name=".ContactDetailActivity" android:exported="false" />
         <activity
             android:name=".ContactsActivity"
             android:exported="false" />
