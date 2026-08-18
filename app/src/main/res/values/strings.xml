@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Agenda Android</string>
-    <string name="welcome_message">Proyecto base con Views/XML</string>
+    <string name="username">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="invalid_credentials">Usuario o contraseña incorrectos</string>
+    <string name="contacts_placeholder">Sesión iniciada correctamente</string>
 </resources>
